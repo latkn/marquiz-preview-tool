@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <title>Quiz Loader</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">Назад</button>
+
+    <div id="marquiz-container" data-marquiz-id=""></div>
+
+    <script>
+        const quizId = localStorage.getItem('quizId');
+        const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+        if (!quizId) {
+            window.location.href = 'index.html';
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = function() {
+            if (quizId) {
+                // Устанавливаем значение data-marquiz-id
+                const marquizContainer = document.getElementById('marquiz-container');
+                marquizContainer.setAttribute('data-marquiz-id', quizId);
+
+                loadMarquiz(quizId, host);
+            }
+        };
+
+        function loadMarquiz(quizId, host) {
+            // Create and append main Marquiz script
+            const marquizScript = document.createElement('script');
+            marquizScript.src = '//script.marquiz.ru/v2.js';
+            marquizScript.async = true;
+
+            marquizScript.onload = function() {
+                Marquiz.init({
+                    host: host, // Use host from localStorage
+                    region: 'ru',
+                    id: quizId,
+                    autoOpen: false,  // Prevent auto-opening if desired
+                    autoOpenFreq: 'once',
+                    openOnExit: false,
+                    disableOnMobile: false
+                });
+
+                // Add inline widget.  IMPORTANT:  Ensure the container exists *before* adding the widget
+                if (document.getElementById('marquiz-container')) {  // Check if the container exists!
+                    (function(t, p) {
+                        window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                            Marquiz.add([t, p]);
+                        });
+                    })('Inline', {
+                        id: quizId,
+                        buttonText: '«Старт»',
+                        bgColor: '#51b905',
+                        textColor: '#ffffff',
+                        rounded: true,
+                        shadow: 'rgba(81, 185, 5, 0.5)',
+                        blicked: true,
+                        buttonOnMobile: true,
+                        container: '#marquiz-container',  // Specify the container VERY IMPORTANT
+                        host: host
+                    });
+                } else {
+                    console.error("Marquiz container element not found!"); // Log an error if the container is missing
+                }
+            };
+
+            document.head.appendChild(marquizScript);
+        }
+    </script>
+</body>
+</html>

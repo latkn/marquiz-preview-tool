@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz ID Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 500px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+
+        .host-select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ID квиза</h2>
+        <div style="display: flex; margin-bottom: 10px;">
+            <input type="text" id="quizId" placeholder="Введите ID...">
+        </div>
+
+        <h2>Хост</h2>
+        <p>Текущий хост: <span id="currentHost">http://localhost:8080</span></p>
+        <select id="host" class="host-select">
+            <option value="http://localhost:8080">http://localhost:8080</option>
+            <option value="//quiz.marquiz.ru">//quiz.marquiz.ru</option>
+            <option value="">Другой (введите ниже)</option>
+        </select>
+        <input type="text" id="customHost" placeholder="Введите другой host" style="display: none;">
+
+        <button onclick="saveSettings()" style="background-color: green;">Сохранить настройки</button><br><br>
+
+
+        <button onclick="goTo('widget.html')">Виджет</button>
+        <button onclick="goTo('autoopen.html')">Авто-открытие</button>
+        <button onclick="goTo('site.html')">В теле сайта</button>
+        <button onclick="goTo('button.html')">Кнопка</button>
+    </div>
+
+    <script>
+
+        function goTo(url) {
+           window.location.href = url;
+        }
+
+        window.onload = function() {
+            const storedQuizId = localStorage.getItem('quizId');
+            if (storedQuizId) {
+                document.getElementById('quizId').value = storedQuizId;
+            }
+
+            let storedHost = localStorage.getItem('host');
+            if (!storedHost) {
+                storedHost = 'http://localhost:8080'; //Set default if none is stored
+                localStorage.setItem('host', storedHost);
+            }
+
+            document.getElementById('currentHost').innerText = storedHost; //Set initial host
+
+            document.getElementById('host').value = storedHost; //Set select's value
+
+            if (storedHost !== "http://localhost:8080" && storedHost !== "//quiz.marquiz.ru") {
+                document.getElementById('customHost').value = storedHost;
+                document.getElementById('customHost').style.display = 'block';
+                document.getElementById('host').value = "";  //clear selector value
+            }
+
+
+
+            // Initial setup for custom host input
+            toggleCustomHostInput();
+        };
+
+        function saveSettings() {
+            const quizId = document.getElementById('quizId').value.trim();
+            if (quizId) {
+                localStorage.setItem('quizId', quizId);
+            }
+
+            let host = document.getElementById('host').value;
+            const customHost = document.getElementById('customHost').value.trim();
+
+            if (host === "") {
+                if (customHost) {
+                    host = customHost;
+                } else {
+                    host = "http://localhost:8080";  //Default
+                }
+            }
+
+            localStorage.setItem('host', host);
+            document.getElementById('currentHost').innerText = host; //Update displayed host
+        }
+
+        // Show/hide custom host input
+        document.getElementById('host').addEventListener('change', toggleCustomHostInput);
+
+        function toggleCustomHostInput() {
+            const hostSelect = document.getElementById('host');
+            const customHostInput = document.getElementById('customHost');
+
+            if (hostSelect.value === "") {
+                customHostInput.style.display = 'block';
+            } else {
+                customHostInput.style.display = 'none';
+                customHostInput.value = ''; // Clear the custom host input
+            }
+        }
+    </script>
+</body>
+</html>

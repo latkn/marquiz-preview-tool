@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Loader</title>
+    <script>
+        const quizId = localStorage.getItem('quizId');
+        if (!quizId) {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">Назад</button>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = function() {
+            const quizId = localStorage.getItem('quizId');
+            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+            if (quizId) {
+                // Marquiz script start
+                (function(w, d, s, o) {
+                    var j = d.createElement(s);
+                    j.async = true;
+                    j.src = '//script.marquiz.ru/v2.js';
+                    j.onload = function() {
+                        if (document.readyState !== 'loading') Marquiz.init(o);
+                        else document.addEventListener("DOMContentLoaded", function() {
+                            Marquiz.init(o);
+                        });
+                    };
+                    d.head.insertBefore(j, d.head.firstElementChild);
+                })(window, document, 'script', {
+                    host: host,
+                    region: 'ru',
+                    id: quizId,
+                    autoOpen: false,
+                    autoOpenFreq: 'once',
+                    openOnExit: false,
+                    disableOnMobile: false
+                });
+                // Marquiz script end
+
+                (function(t, p) {
+                    window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                        Marquiz.add([t, p]);
+                    });
+                })('Pop', {
+                    id: quizId,
+                    title: 'Пройти тест',
+                    text: 'Пройдите квиз и посмотрим что будет',
+                    delay: 0,
+                    textColor: '#ffffff',
+                    bgColor: '#d34085',
+                    svgColor: '#ffffff',
+                    closeColor: '#ffffff',
+                    bonusCount: 0,
+                    bonusText: 'Ваша скидка: 456 ₽',
+                    type: 'side',
+                    position: 'position_top-right',
+                    rounded: true,
+                    shadow: 'rgba(211, 64, 133, 0)',
+                    blicked: true,
+                    host: host
+                });
+            }
+        };
+    </script>
+</body>
+</html>

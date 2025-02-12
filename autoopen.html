@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz Loader</title>
+    <script>
+        const quizId = localStorage.getItem('quizId');
+        if (!quizId) {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">Назад</button>
+    <script async id="marquizScript" src="//script.marquiz.ru/v2.js"></script>
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = function() {
+            const quizId = localStorage.getItem('quizId');
+            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+
+            if (quizId) {
+                Marquiz.init({
+                    host: host,
+                    region: 'ru',
+                    id: quizId,
+                    autoOpen: 0,
+                    autoOpenFreq: 'always',
+                    openOnExit: true,
+                    disableOnMobile: false
+                });
+            }
+        };
+    </script>
+</body>
+</html>
