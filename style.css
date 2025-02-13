@@ -62,7 +62,7 @@ button:hover {
   font-size: 16px;
 }
 
-#currentHost {
+.current-id {
     color: #8FBC8F; /* subtle green for current host */
 }
 
