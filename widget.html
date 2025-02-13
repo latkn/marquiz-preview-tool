@@ -12,25 +12,22 @@
     </script>
     <link rel="stylesheet" href="style.css">
     <style>
-        .back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 10px 15px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .back-button:hover {
-            background: #a71d2a;
+        .widget-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <button class="back-button" onclick="goBack()">Назад</button>
+
+    <div class="widget-header">
+        <h2 class="widget-title" style="text-align: left;">PROD</h2>
+        <h2 class="widget-title" style="text-align: right;">DEV</h2>
+    </div>
+
     <script async id="marquizScript" src="//script.marquiz.ru/v2.js"></script>
     <script>
         function goBack() {
@@ -39,6 +36,7 @@
 
         window.onload = function() {
             const quizId = localStorage.getItem('quizId');
+            const quizIdProd = localStorage.getItem('quizIdProd');
             const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
 
             if (quizId) {
@@ -56,6 +54,21 @@
                     host: host,
                     id: quizId,
                     position: 'right',
+                    delay: 0,
+                    autoOpen: 100,
+                    disableIfClosed: false
+                });
+            }
+
+            if (quizIdProd) {
+                (function(t, p) {
+                    window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                        Marquiz.add([t, p]);
+                    });
+                })('Widget', {
+                    host: '//quiz.marquiz.ru',
+                    id: quizIdProd,
+                    position: 'left',
                     delay: 0,
                     autoOpen: 100,
                     disableIfClosed: false

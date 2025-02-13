@@ -1,4 +1,104 @@
 /* style.css */
 body {
-  background-color: #5c5858; /* или другой оттенок серого */
+  font-family: "Comic Sans MS", cursive, sans-serif; /* Комичный шрифт */
+  background-color: #222; /* Темный фон, как в канализации */
+  color: #fff; /* Светлый цвет текста для контраста */
+  margin: 0;
+  padding: 0;
+  background-image: url("https://i.imgur.com/9TjvMKM.png"); /* Ссылка на текстуру канализации */
+  background-repeat: repeat;
+}
+
+.container {
+  background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный контейнер */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  width: 500px;
+  margin: 20px auto; /* Центрирование контейнера */
+}
+
+h2 {
+  color: #ffcc00; /* Желтый цвет для заголовков, как повязки Черепашек */
+  text-shadow: 2px 2px 4px #000000; /* Тень для текста */
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 2px solid #444; /* Более темные рамки */
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #333; /* Темный фон для инпутов */
+  color: #fff;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4CAF50; /* Зеленый цвет для кнопок */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: background-color 0.3s; /* Плавное изменение цвета */
+}
+
+button:hover {
+  background-color: #367c39; /* Более темный зеленый при наведении */
+}
+
+.host-select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+#currentHost {
+    color: #8FBC8F; /* subtle green for current host */
+}
+
+/* Specific colors for Prod and Dev Titles */
+h2[style*="left"] {
+  color: #e91e63; /* Pink for PROD (Raphael) */
+  text-shadow: 2px 2px 4px #000000;
+}
+
+h2[style*="right"] {
+  color: #ff9800; /* Orange for DEV (Michelangelo) */
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: "Comic Sans MS", cursive, sans-serif; /* Комичный шрифт */
+    padding: 10px 15px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.back-button:hover {
+    background: #a71d2a;
+}
+
+.widget-header {
+  display: flex;
+  margin-top: 60px;
+  width: 90%;
+  justify-content: space-between;
+  justify-self: center;
 }
