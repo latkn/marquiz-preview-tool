@@ -5,16 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale: 1.0">
     <title>Quiz Loader</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .quiz-container {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .quiz-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+    </style>
 </head>
 <body>
     <button class="back-button" onclick="goBack()">Назад</button>
 
-    <div id="marquiz-container" data-marquiz-id=""></div>
+    <div class="quiz-container">
+        <h2 class="quiz-title" style="margin-top: 60px;">Quiz DEV</h2>
+        <div id="marquiz-container-dev" data-marquiz-id=""></div>
+    </div>
+
+    <div class="quiz-container">
+        <h2 class="quiz-title">Quiz PROD</h2>
+        <div id="marquiz-container-prod" data-marquiz-id=""></div>
+    </div>
 
     <script>
         const quizId = localStorage.getItem('quizId');
+        const quizIdProd = localStorage.getItem('quizIdProd');
         const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
-        if (!quizId) {
+        if (!quizId && !quizIdProd) {
             window.location.href = 'index.html';
         }
 
@@ -25,14 +48,20 @@
         window.onload = function() {
             if (quizId) {
                 // Устанавливаем значение data-marquiz-id
-                const marquizContainer = document.getElementById('marquiz-container');
+                const marquizContainer = document.getElementById('marquiz-container-dev');
                 marquizContainer.setAttribute('data-marquiz-id', quizId);
 
-                loadMarquiz(quizId, host);
+                loadMarquiz(quizId, host, 'marquiz-container-dev');
+            }
+
+            if (quizIdProd) {
+                const marquizContainerProd = document.getElementById('marquiz-container-prod');
+                marquizContainerProd.setAttribute('data-marquiz-id', quizIdProd);
+                loadMarquiz(quizIdProd, '//quiz.marquiz.ru', 'marquiz-container-prod');
             }
         };
 
-        function loadMarquiz(quizId, host) {
+        function loadMarquiz(quizId, host, containerId) {
             // Create and append main Marquiz script
             const marquizScript = document.createElement('script');
             marquizScript.src = '//script.marquiz.ru/v2.js';
@@ -50,7 +79,7 @@
                 });
 
                 // Add inline widget.  IMPORTANT:  Ensure the container exists *before* adding the widget
-                if (document.getElementById('marquiz-container')) {  // Check if the container exists!
+                if (document.getElementById(containerId)) {  // Check if the container exists!
                     (function(t, p) {
                         window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
                             Marquiz.add([t, p]);
@@ -64,7 +93,7 @@
                         shadow: 'rgba(81, 185, 5, 0.5)',
                         blicked: true,
                         buttonOnMobile: true,
-                        container: '#marquiz-container',  // Specify the container VERY IMPORTANT
+                        container: '#' + containerId,  // Specify the container VERY IMPORTANT
                         host: host
                     });
                 } else {
