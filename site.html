@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
-    <title>Quiz Loader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <title>Quiz Loader</title>
     <style>
         .quiz-container {
             margin-bottom: 20px;
@@ -46,62 +46,101 @@
         }
 
         window.onload = function() {
-            if (quizId) {
-                // Устанавливаем значение data-marquiz-id
-                const marquizContainer = document.getElementById('marquiz-container-dev');
-                marquizContainer.setAttribute('data-marquiz-id', quizId);
-
-                loadMarquiz(quizId, host, 'marquiz-container-dev');
-            }
-
-            if (quizIdProd) {
-                const marquizContainerProd = document.getElementById('marquiz-container-prod');
-                marquizContainerProd.setAttribute('data-marquiz-id', quizIdProd);
-                loadMarquiz(quizIdProd, '//quiz.marquiz.ru', 'marquiz-container-prod');
-            }
+            loadMarquiz();
         };
 
-        function loadMarquiz(quizId, host, containerId) {
+        function loadMarquiz() {
             // Create and append main Marquiz script
             const marquizScript = document.createElement('script');
             marquizScript.src = '//script.marquiz.ru/v2.js';
-            marquizScript.async = true;
-
+            marquizScript.async = false; // Загружаем скрипт синхронно
             marquizScript.onload = function() {
-                Marquiz.init({
-                    host: host, // Use host from localStorage
-                    region: 'ru',
-                    id: quizId,
-                    autoOpen: false,  // Prevent auto-opening if desired
-                    autoOpenFreq: 'once',
-                    openOnExit: false,
-                    disableOnMobile: false
-                });
 
-                // Add inline widget.  IMPORTANT:  Ensure the container exists *before* adding the widget
-                if (document.getElementById(containerId)) {  // Check if the container exists!
-                    (function(t, p) {
-                        window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
-                            Marquiz.add([t, p]);
-                        });
-                    })('Inline', {
-                        id: quizId,
-                        buttonText: '«Старт»',
-                        bgColor: '#51b905',
-                        textColor: '#ffffff',
-                        rounded: true,
-                        shadow: 'rgba(81, 185, 5, 0.5)',
-                        blicked: true,
-                        buttonOnMobile: true,
-                        container: '#' + containerId,  // Specify the container VERY IMPORTANT
-                        host: host
-                    });
-                } else {
-                    console.error("Marquiz container element not found!"); // Log an error if the container is missing
-                }
+                //После загрузки скрипта инициализируем виджеты
+                initDevWidget();
+                initProdWidget();
             };
-
             document.head.appendChild(marquizScript);
+        }
+
+        function initDevWidget() {
+            const quizId = localStorage.getItem('quizId');
+            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+            const containerId = 'marquiz-container-dev';
+
+             if (!quizId) return; //If prod is not defined then return
+
+            const marquizContainer = document.getElementById(containerId);
+            marquizContainer.innerHTML = ''; // Clear the container
+            marquizContainer.setAttribute('data-marquiz-id', quizId);
+
+            Marquiz.init({  // Инициализируем Marquiz
+                host: host, // Use host from localStorage
+                region: 'ru',
+                id: quizId,
+                autoOpen: false,  // Prevent auto-opening if desired
+                autoOpenFreq: 'once',
+                openOnExit: false,
+                disableOnMobile: false
+            });
+
+
+            (function(t, p) {
+                window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                    Marquiz.add([t, p]);
+                });
+            })('Inline', {
+                id: quizId,
+                buttonText: '«Старт»',
+                bgColor: '#51b905',
+                textColor: '#ffffff',
+                rounded: true,
+                shadow: 'rgba(81, 185, 5, 0.5)',
+                blicked: true,
+                buttonOnMobile: true,
+                container: '#' + containerId,  // Specify the container VERY IMPORTANT
+                host: host
+            });
+        }
+
+
+        function initProdWidget() {
+            const quizIdProd = localStorage.getItem('quizIdProd');
+            const containerId = 'marquiz-container-prod';
+
+            if (!quizIdProd) return; //If prod is not defined then return
+
+            const marquizContainer = document.getElementById(containerId);
+            marquizContainer.innerHTML = ''; // Clear the container
+            marquizContainer.setAttribute('data-marquiz-id', quizIdProd);
+
+            Marquiz.init({  // Инициализируем Marquiz
+                host: '//quiz.marquiz.ru', // Use host from localStorage
+                region: 'ru',
+                id: quizIdProd,
+                autoOpen: false,  // Prevent auto-opening if desired
+                autoOpenFreq: 'once',
+                openOnExit: false,
+                disableOnMobile: false
+            });
+
+
+            (function(t, p) {
+                window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                    Marquiz.add([t, p]);
+                });
+            })('Inline', {
+                id: quizIdProd,
+                buttonText: '«Старт»',
+                bgColor: '#51b905',
+                textColor: '#ffffff',
+                rounded: true,
+                shadow: 'rgba(81, 185, 5, 0.5)',
+                blicked: true,
+                buttonOnMobile: true,
+                container: '#' + containerId,  // Specify the container VERY IMPORTANT
+                host: '//quiz.marquiz.ru'
+            });
         }
     </script>
 </body>
