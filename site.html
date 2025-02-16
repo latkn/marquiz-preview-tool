@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Loader</title>
     <link rel="stylesheet" href="style.css">
     <script src="draggable-line.js"></script>
-    <title>Quiz Loader</title>
+    <script src="line-factory.js"></script>
     <style>
         .quiz-container {
             margin-bottom: 20px;
@@ -18,7 +19,6 @@
             font-weight: bold;
             margin-bottom: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -34,11 +34,10 @@
         <div id="marquiz-container-prod" data-marquiz-id=""></div>
     </div>
 
-    <button onclick="createDraggableLine()">Создать вертикальную линию</button>
+    <button onclick="createVerticalLine()">Создать вертикальную линию</button>
+    <button onclick="createHorizontalLine()">Создать горизонтальную линию</button>
 
     <script>
-        let draggableLineInstance = null;
-
         const quizId = localStorage.getItem('quizId');
         const quizIdProd = localStorage.getItem('quizIdProd');
         const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
@@ -50,31 +49,8 @@
             window.location.href = 'index.html';
         }
 
-        function createDraggableLine() {
-            const draggableLine = new DraggableLine({
-                onDragEnd: function(position) {
-                    console.log('Line stopped at position: ' + position + 'px');
-                    // You can do something with the position here, like saving it to localStorage or using it to adjust other elements on the page
-
-                }
-            });
-
-            draggableLine.createLine();  //Create after we instantiate
-        }
-
-
         window.onload = function() {
             loadMarquiz();
-
-            const draggableLine = new DraggableLine({
-                color: 'rgba(255, 0, 0, 0.5)',  //Semi-transparent red
-                width: '3px',
-                initialPosition: '25%',
-                onDragEnd: function(position) {
-                    // You can do something with the position here, like saving it to localStorage or using it to adjust other elements on the page
-
-                }
-            })
         };
 
         function loadMarquiz() {
