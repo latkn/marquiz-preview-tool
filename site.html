@@ -35,12 +35,13 @@
     </div>
 
     <button onclick="createVerticalLine()">Создать вертикальную линию</button>
-    <button onclick="createHorizontalLine()">Создать горизонтальную линию</button>
 
     <script>
         const quizId = localStorage.getItem('quizId');
         const quizIdProd = localStorage.getItem('quizIdProd');
         const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+        const prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/';
+
         if (!quizId && !quizIdProd) {
             window.location.href = 'index.html';
         }
@@ -119,7 +120,7 @@
             marquizContainer.setAttribute('data-marquiz-id', quizIdProd);
 
             Marquiz.init({  // Инициализируем Marquiz
-                host: '//quiz.marquiz.ru', // Use host from localStorage
+                host: prodStand, // Use host from localStorage
                 region: 'ru',
                 id: quizIdProd,
                 autoOpen: false,  // Prevent auto-opening if desired
@@ -143,9 +144,20 @@
                 blicked: true,
                 buttonOnMobile: true,
                 container: '#' + containerId,  // Specify the container VERY IMPORTANT
-                host: '//quiz.marquiz.ru'
+                host: prodStand
             });
         }
+
+        function createVerticalLine() {
+            window.createDraggableLine({
+                orientation: 'vertical',
+                onDragEnd: function(position) {
+                    // console.log('Vertical line stopped at position: ' + position + 'px');
+                    // You can do something with the position here, like saving it to localStorage or using it to adjust other elements on the page
+                }
+            });
+        }
+
     </script>
 </body>
 </html>

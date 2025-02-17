@@ -18,8 +18,8 @@
         <div>Текущий ID квиза (dev): <span class="current-id" id="currentQuizId"></span></div>
         <input type="text" id="quizId" placeholder="Введите ID для разработки...">
 
-        <h2>Хост</h2>
-        <div>Текущий хост: <span class="current-id id="currentHost">http://localhost:8080</span></div>
+        <h2>Хост (dev)</h2>
+        <div>Текущий хост: <span class="current-id" id="currentHost">http://localhost:8080</span></div>
         <select id="host" class="host-select">
             <option value="http://localhost:8080">http://localhost:8080</option>
             <option value="//quiz.marquiz.ru">//quiz.marquiz.ru</option>
@@ -27,10 +27,15 @@
         </select>
         <input type="text" id="customHost" placeholder="Введите другой host" style="display: none;">
 
-        <h2>ID квиза (prod)</h2>
         <div style="opacity: .4;">Для сравнения dev и prod:</div>
-        <div>Текущий ID квиза: <span class="current-id"id="currentQuizIdProd"></span></div>
+        <h2>ID квиза</h2>
+        <div>Текущий ID квиза: <span class="current-id" id="currentQuizIdProd"></span></div>
         <input type="text" id="quizIdProd" placeholder="Введите ID квиза на боевой ветке">
+
+        <select id="prodStand" class="host-select">
+            <option value="https://mrqz.me/">PROD</option>
+            <option value="https://quiz-master-mrqz.website.yandexcloud.net">STAND</option>
+        </select>
 
         <button onclick="saveSettings()" style="background-color: green;">Сохранить настройки</button><br><br>
 
@@ -49,6 +54,10 @@
         }
 
         window.onload = function() {
+            // Initial setup for custom host input
+            toggleCustomHostInput();
+
+
             const storedQuizId = localStorage.getItem('quizId');
             if (storedQuizId) {
                 document.getElementById('quizId').value = storedQuizId;
@@ -62,7 +71,6 @@
             if (storedQuizIdProd) {
                 document.getElementById('quizIdProd').value = storedQuizIdProd;
                 document.getElementById('currentQuizIdProd').innerText = storedQuizIdProd;
-
             } else {
                 document.getElementById('currentQuizIdProd').innerText = "Не задан";
             }
@@ -83,10 +91,14 @@
                 document.getElementById('host').value = "";  //clear selector value
             }
 
+            let storedProdStand = localStorage.getItem('prodStand');
+            if (!storedProdStand) {
+                storedProdStand = 'https://mrqz.me/'; //Set default
+                localStorage.setItem('prodStand', storedProdStand);
+            }
+            document.getElementById('prodStand').value = storedProdStand;
 
 
-            // Initial setup for custom host input
-            toggleCustomHostInput();
         };
 
         function saveSettings() {
@@ -122,10 +134,20 @@
 
             localStorage.setItem('host', host);
             document.getElementById('currentHost').innerText = host; //Update displayed host
+
+            const prodStand = document.getElementById('prodStand').value;
+            localStorage.setItem('prodStand', prodStand);
         }
 
         // Show/hide custom host input
-        document.getElementById('host').addEventListener('change', toggleCustomHostInput);
+        document.getElementById('host').addEventListener('change', function() {
+            toggleCustomHostInput()
+                setTimeout(function() {  //Wrap the code into setTimeout
+                    saveSettings();
+                }, 0)
+
+            }
+        );
 
         function toggleCustomHostInput() {
             const hostSelect = document.getElementById('host');
@@ -138,6 +160,9 @@
                 customHostInput.value = ''; // Clear the custom host input
             }
         }
+        document.getElementById('prodStand').addEventListener('change', function() {
+            saveSettings();
+        });
     </script>
 </body>
 </html>

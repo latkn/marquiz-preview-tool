@@ -38,6 +38,7 @@
             const quizId = localStorage.getItem('quizId');
             const quizIdProd = localStorage.getItem('quizIdProd');
             const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+            const prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/'; // Default Prod Stand
 
             if (quizId) {
                 Marquiz.init({
@@ -66,7 +67,7 @@
                         Marquiz.add([t, p]);
                     });
                 })('Widget', {
-                    host: '//quiz.marquiz.ru',
+                    host: prodStand,
                     id: quizIdProd,
                     position: 'left',
                     delay: 0,

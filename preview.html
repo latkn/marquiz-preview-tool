@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -115,12 +115,11 @@
 
         .navbar button {
             margin: 0 5px;
-            padding: 0 10px;
+            padding: 5px 10px;
         }
     </style>
 </head>
 <body>
-
     <!-- Navbar -->
     <div class="navbar">
         <div class="navbar-left">
@@ -134,7 +133,6 @@
             <button class="create-line" onclick="createHorizontalLine()">г</button>
         </div>
     </div>
-
 
     <div class="tab-container">
         <div class="tab-buttons">
@@ -155,8 +153,7 @@
     <script src="line-factory.js"></script>
 
     <script>
-
-      function goBack() {
+        function goBack() {
             window.location.href = 'index.html';
         }
 
@@ -164,8 +161,7 @@
             window.createDraggableLine({
                 orientation: 'vertical',
                 onDragEnd: function(position) {
-                    console.log('Vertical line stopped at position: ' + position + 'px');
-                    // You can do something with the position here, like saving it to localStorage or using it to adjust other elements on the page
+                    // console.log('Vertical line stopped at position: ' + position + 'px');
                 }
             });
         }
@@ -174,8 +170,7 @@
             window.createDraggableLine({
                 orientation: 'horizontal',
                 onDragEnd: function(position) {
-                    console.log('Horizontal line stopped at position: ' + position + 'px');
-                    // You can do something with the position here, like saving it to localStorage or using it to adjust other elements on the page
+                    // console.log('Horizontal line stopped at position: ' + position + 'px');
                 }
             });
         }
@@ -206,14 +201,32 @@
         }
 
 
-
         document.addEventListener('DOMContentLoaded', function() {
+            //Load everything from local storage
+            let devQuizId = localStorage.getItem('quizId');
+            let prodQuizId = localStorage.getItem('quizIdProd');
+            let host = localStorage.getItem('host') || 'http://localhost:8080';
+             let prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/'; //Use the data here instead of URL
 
-                //Initial display of iframe size
-                updateIframeSizeDisplay();
+            const devIframe = document.querySelector('#dev .quiz-iframe');
+            const prodIframe = document.querySelector('#prod .quiz-iframe');
 
+            if (devQuizId) {
+                devIframe.src = host + '/' + devQuizId;
+            } else {
+                devIframe.src = 'about:blank';
+            }
 
-             //Update it on tab change
+            if (prodQuizId) {
+                prodIframe.src = prodStand + '/' + prodQuizId;
+            } else {
+                prodIframe.src = 'about:blank';
+            }
+
+            // Initial display of iframe size
+            updateIframeSizeDisplay();
+
+            //Update it on tab change
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -227,40 +240,13 @@
                     this.classList.add('active');
                     document.getElementById(tab).style.display = 'block';
 
-                      //Refresh iframe width/height on tab click because display changed
-                     updateIframeSizeDisplay();
-
-
+                    //Refresh iframe width/height on tab click because display changed
+                    updateIframeSizeDisplay();
                 });
             });
 
-
              // Update size when window resized
-              window.addEventListener('resize', updateIframeSizeDisplay);
-
-
-            const devQuizId = localStorage.getItem('quizId');
-            const prodQuizId = localStorage.getItem('quizIdProd');
-            const host = localStorage.getItem('host') || 'http://localhost:8080';
-
-            const devIframe = document.querySelector('#dev .quiz-iframe');
-            const prodIframe = document.querySelector('#prod .quiz-iframe');
-
-            if (devQuizId) {
-                devIframe.src = host + '/' + devQuizId;
-            } else {
-                devIframe.src = 'about:blank';
-                devIframe.style.backgroundColor = 'red';
-            }
-
-            if (prodQuizId) {
-                prodIframe.src = 'https://mrqz.me/' + prodQuizId;
-            } else {
-                prodIframe.src = 'about:blank';
-                prodIframe.style.backgroundColor = 'red';
-            }
-
-
+            window.addEventListener('resize', updateIframeSizeDisplay);
         });
     </script>
 </body>
