@@ -80,7 +80,7 @@
         }
 
         .create-line:last-child {
-          margin-right: 0;
+            margin-right: 0;
         }
 
         /* Styles for the navbar */
@@ -136,8 +136,8 @@
 
     <div class="tab-container">
         <div class="tab-buttons">
-            <button class="tab-button active" data-tab="dev">DEV</button>
-            <button class="tab-button" data-tab="prod">PROD</button>
+            <button class="tab-button active" data-tab="dev" onclick="showTab('dev', event)">DEV</button>
+            <button class="tab-button" data-tab="prod" onclick="showTab('prod', event)">PROD</button>
         </div>
 
         <div class="tab-content" id="dev" >
@@ -175,38 +175,52 @@
             });
         }
 
-
-        function updateIframeSizeDisplay() {
-            const devIframe = document.querySelector('#dev .quiz-iframe');
-            const prodIframe = document.querySelector('#prod .quiz-iframe');
+        function updateIframeSizeDisplay(tabId) {
+            let iframe;
+            if (tabId === 'dev') {
+                iframe = document.querySelector('#dev .quiz-iframe');
+            } else if (tabId === 'prod') {
+                iframe = document.querySelector('#prod .quiz-iframe');
+            } else {
+                 //Default to dev if no tab passed.
+                iframe = document.querySelector('#dev .quiz-iframe');
+            }
 
             let width = 0;
             let height = 0;
 
-            let currentIframe = null;
-            if (devIframe && document.getElementById('dev').style.display != 'none') {
-                currentIframe = devIframe;
-            } else if (prodIframe && document.getElementById('prod').style.display != 'none') {
-                currentIframe = prodIframe;
-            }
-
-            if (currentIframe) {
-
-               //Correct way
-                width = currentIframe.offsetWidth;
-                height = currentIframe.offsetHeight;
+            if (iframe) {
+                width = iframe.offsetWidth;
+                height = iframe.offsetHeight;
             }
 
             document.getElementById('iframeSize').innerText = `${width}px x ${height}px`;
         }
 
 
+        function showTab(tabId, event) {
+            // Prevent the button's default click behavior
+            event.preventDefault();
+
+            // Deactivate all buttons and hide all content
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+            // Activate clicked button and show content
+            const tabButton = document.querySelector(`[data-tab="${tabId}"]`);
+            tabButton.classList.add('active');
+            document.getElementById(tabId).style.display = 'block';
+
+            //Refresh iframe width/height on tab click because display changed
+            updateIframeSizeDisplay(tabId);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             //Load everything from local storage
             let devQuizId = localStorage.getItem('quizId');
             let prodQuizId = localStorage.getItem('quizIdProd');
             let host = localStorage.getItem('host') || 'http://localhost:8080';
-             let prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/'; //Use the data here instead of URL
+            let prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/'; //Use the data here instead of URL
 
             const devIframe = document.querySelector('#dev .quiz-iframe');
             const prodIframe = document.querySelector('#prod .quiz-iframe');
@@ -220,33 +234,35 @@
             if (prodQuizId) {
                 prodIframe.src = prodStand + '/' + prodQuizId;
             } else {
+                devIframe.src = 'about:blank';
                 prodIframe.src = 'about:blank';
             }
 
-            // Initial display of iframe size
-            updateIframeSizeDisplay();
+            // Get all tab buttons
+            window.tabButtons = document.querySelectorAll('.tab-button'); // Access globally
 
-            //Update it on tab change
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const tab = this.dataset.tab;
 
-                    //Deactivate all buttons and hide all content
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            //Initial display of iframe size
+            updateIframeSizeDisplay('dev'); //Set default
 
-                    //Activate clicked button and show content
-                    this.classList.add('active');
-                    document.getElementById(tab).style.display = 'block';
 
-                    //Refresh iframe width/height on tab click because display changed
-                    updateIframeSizeDisplay();
-                });
+            //Global Hotkey
+            document.addEventListener('keydown', function(event) {
+                if (event.key === '1') {
+                    showTab('dev', event);
+                } else if (event.key === '2') {
+                    showTab('prod', event);
+                }
             });
 
              // Update size when window resized
-            window.addEventListener('resize', updateIframeSizeDisplay);
+            window.addEventListener('resize', function() {
+                if (document.getElementById('dev').style.display != 'none') {
+                    updateIframeSizeDisplay('dev');
+                } else  {
+                    updateIframeSizeDisplay('prod');
+                }
+            });
         });
     </script>
 </body>

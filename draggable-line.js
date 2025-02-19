@@ -19,7 +19,7 @@
     this.line = document.createElement('div');
     this.line.style.position = 'fixed'; // Fixed position for staying on the screen
     this.line.style.backgroundColor = this.options.color;
-    this.line.style.zIndex = '1000'; // Ensure it's on top of other elements
+    this.line.style.zIndex = '99999999999999999999'; // Ensure it's on top of other elements
     this.line.style.userSelect = 'none'; //Prevent selection
 
     if (this.options.orientation === 'vertical') {

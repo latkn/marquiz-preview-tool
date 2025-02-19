@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Loader</title>
-    <script>
-        const quizId = localStorage.getItem('quizId');
-        if (!quizId) {
-            window.location.href = 'index.html';
-        }
-    </script>
     <link rel="stylesheet" href="style.css">
+    <script src="draggable-line.js"></script>
+    <script src="line-factory.js"></script>
     <style>
         .widget-title {
             font-size: 24px;
@@ -28,8 +24,29 @@
         <h2 class="widget-title" style="text-align: right;">DEV</h2>
     </div>
 
+    <button onclick="createVerticalLine()">В</button>
+    <button onclick="createHorizontalLine()">Г</button>
+
     <script async id="marquizScript" src="//script.marquiz.ru/v2.js"></script>
     <script>
+        function createVerticalLine() {
+            window.createDraggableLine({
+                orientation: 'vertical',
+                onDragEnd: function(position) {
+                    // console.log('Vertical line stopped at position: ' + position + 'px');
+                }
+            });
+        }
+
+        function createHorizontalLine() {
+            window.createDraggableLine({
+                orientation: 'horizontal',
+                onDragEnd: function(position) {
+                    // console.log('Horizontal line stopped at position: ' + position + 'px');
+                }
+            });
+        }
+
         function goBack() {
             window.location.href = 'index.html';
         }
