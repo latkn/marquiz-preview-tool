@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Loader</title>
+    <style>
+        .parameter-toggles {
+            display: grid;
+            grid-template-columns: 40% auto; /* Левая колонка 40%, правая - оставшееся пространство */
+            width: 800px; /* Увеличенная ширина таблицы настроек */
+            gap: 10px;
+            padding: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Центрирование по горизонтали и вертикали */
+            background-color: #333; /* Фон для лучшего контраста */
+            border-radius: 10px; /* Скругленные углы */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень для визуального эффекта */
+        }
+        .parameter-toggles label {
+            display: contents; /* Используем содержимое для правильного отображения в Grid */
+        }
+        .parameter-toggles label > span {
+            align-self: center; /* Выравнивание текста по центру */
+            color: #fff; /* Белый цвет текста для контраста */
+        }
+        .parameter-toggles input,
+        .parameter-toggles select {
+            background-color: #444; /* Темный фон для полей ввода */
+            color: #fff; /* Белый текст */
+            border: 1px solid #555; /* Граница для полей ввода */
+            border-radius: 5px; /* Скругленные углы */
+            padding: 5px;
+        }
+    </style>
     <script>
         const quizId = localStorage.getItem('quizId');
         if (!quizId) {
@@ -15,17 +46,115 @@
 <body>
     <button class="back-button" onclick="goBack()">Назад</button>
 
+    <!-- Parameter toggles -->
+    <div class="parameter-toggles">
+        <label>
+            <span>Button Text:</span>
+            <input type="text" id="buttonText" value="Старт">
+        </label>
+        <label>
+            <span>Background Color:</span>
+            <input type="color" id="bgColor" value="#61824a">
+        </label>
+        <label>
+            <span>Text Color:</span>
+            <input type="color" id="textColor" value="#ffffff">
+        </label>
+        <label>
+            <span>Rounded:</span>
+            <input type="checkbox" id="rounded" checked>
+        </label>
+        <label>
+            <span>Shadow:</span>
+            <input type="text" id="shadow" value="rgba(97, 130, 74, 0.5)">
+        </label>
+        <label>
+            <span>Blicked:</span>
+            <input type="checkbox" id="blicked" checked>
+        </label>
+        <label>
+            <span>Fixed Enabled:</span>
+            <input type="checkbox" id="fixedEnabled" checked>
+        </label>
+        <label id="fixedPositionLabel">
+            <span>Fixed Position:</span>
+            <select id="fixed">
+                <option value="left" selected>Left</option>
+                <option value="right">Right</option>
+            </select>
+        </label>
+        <label id="customFixedLabel" style="display: none;">
+            <span>Custom Position (CSS):</span>
+            <input type="text" id="customFixedValue" placeholder="e.g., top: 50px; left: 20px;">
+        </label>
+    </div>
+
     <script>
         function goBack() {
             window.location.href = 'index.html';
         }
 
+        function updateMarquizButton() {
+            const quizId = localStorage.getItem('quizId');
+            if (!quizId) return;
+
+            const buttonText = document.getElementById('buttonText').value;
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const rounded = document.getElementById('rounded').checked;
+            const shadow = document.getElementById('shadow').value;
+            const blicked = document.getElementById('blicked').checked;
+            const fixedEnabled = document.getElementById('fixedEnabled').checked;
+            const fixed = fixedEnabled ? document.getElementById('fixed').value : null;
+            const customFixedValue = document.getElementById('customFixedValue').value;
+
+            // Find the existing Marquiz container
+            let marquizContainer = document.querySelector('.marquiz__container');
+            if (!marquizContainer) {
+                // If no container exists, create one
+                marquizContainer = document.createElement('div');
+                marquizContainer.className = 'marquiz__container';
+                document.body.appendChild(marquizContainer);
+            }
+
+            // Remove the existing Marquiz widget instance
+            const existingWidget = marquizContainer.querySelector(`[data-marquiz-id="${quizId}"]`);
+            if (existingWidget) {
+                existingWidget.remove();
+            }
+
+            // Apply custom fixed position if selected
+            if (fixed === 'custom' && customFixedValue) {
+                marquizContainer.style.cssText = customFixedValue;
+            } else {
+                marquizContainer.style.cssText = ''; // Reset styles for predefined positions
+            }
+
+            // Add updated Marquiz widget
+            marquizContainer.innerHTML = `<div data-marquiz-id="${quizId}"></div>`;
+            (function(t, p) {
+                window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                    Marquiz.add([t, p]);
+                });
+            })('Button', {
+                id: quizId,
+                buttonText: buttonText,
+                bgColor: bgColor,
+                textColor: textColor,
+                rounded: rounded,
+                shadow: shadow,
+                blicked: blicked,
+                ...(fixedEnabled && { fixed: fixed }) // Add fixed only if enabled
+            });
+        }
+
+        // Attach event listeners to inputs for live updates
         window.onload = function() {
             const quizId = localStorage.getItem('quizId');
-            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+            const host = localStorage.getItem('host') || '//quiz.marquiz.ru'; // Default host
             if (quizId) {
-                // Marquiz script start
-                (function(w, d, s, o) {
+                // Initialize Marquiz script
+                (function(w, d, s, o){
                     var j = d.createElement(s);
                     j.async = true;
                     j.src = '//script.marquiz.ru/v2.js';
@@ -43,32 +172,38 @@
                     autoOpen: false,
                     autoOpenFreq: 'once',
                     openOnExit: false,
-                    disableOnMobile: false
+                    disableOnMobile: false,
                 });
-                // Marquiz script end
 
-                (function(t, p) {
-                    window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
-                        Marquiz.add([t, p]);
-                    });
-                })('Pop', {
-                    id: quizId,
-                    title: 'Пройти тест',
-                    text: 'Пройдите квиз и посмотрим что будет',
-                    delay: 0,
-                    textColor: '#ffffff',
-                    bgColor: '#d34085',
-                    svgColor: '#ffffff',
-                    closeColor: '#ffffff',
-                    bonusCount: 0,
-                    bonusText: 'Ваша скидка: 456 ₽',
-                    type: 'side',
-                    position: 'position_top-right',
-                    rounded: true,
-                    shadow: 'rgba(211, 64, 133, 0)',
-                    blicked: true,
-                    host: host
+                // Add Marquiz button
+                updateMarquizButton();
+
+                // Attach input event listeners for live updates
+                document.querySelectorAll('.parameter-toggles input, .parameter-toggles select').forEach(input => {
+                    input.addEventListener('input', updateMarquizButton);
+                    input.addEventListener('change', updateMarquizButton);
                 });
+
+                // Show/hide custom fixed position input based on selection
+                const fixedSelect = document.getElementById('fixed');
+                const customFixedLabel = document.getElementById('customFixedLabel');
+                fixedSelect.addEventListener('change', function() {
+                    if (fixedSelect.value === 'custom') {
+                        customFixedLabel.style.display = 'block';
+                    } else {
+                        customFixedLabel.style.display = 'none';
+                    }
+                });
+
+                // Show/hide fixed position dropdown based on checkbox
+                const fixedEnabledCheckbox = document.getElementById('fixedEnabled');
+                const fixedPositionLabel = document.getElementById('fixedPositionLabel');
+                fixedEnabledCheckbox.addEventListener('change', function() {
+                    fixedPositionLabel.style.display = fixedEnabledCheckbox.checked ? 'block' : 'none';
+                });
+
+                // Initialize visibility of fixed position dropdown
+                fixedPositionLabel.style.display = fixedEnabledCheckbox.checked ? 'block' : 'none';
             }
         };
     </script>
