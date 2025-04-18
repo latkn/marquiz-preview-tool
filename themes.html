@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Переменные темы</title>
+    <style>
+        body.m-theme-light {
+            background: #FFFFFF;
+        }
+
+        body.m-theme-dark {
+            background: var(--m-base-01);
+        }
+
+        .theme-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: 8px;
+            background: var(--m-base-02);
+            padding: 4px;
+            border-radius: 8px;
+            margin-left: auto;
+        }
+
+        .theme-switcher button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            background: transparent;
+            color: var(--m-text-01);
+            transition: all 0.2s ease;
+        }
+
+        .theme-switcher button.active {
+            background: var(--m-pink-primary);
+            color: white;
+        }
+
+        .theme-switcher button:hover:not(.active) {
+            background: var(--m-base-03);
+        }
+
+        .variables-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .group-container {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .variable-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--m-base-02);
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            text-align: center;
+            border: 1px solid var(--m-base-03);
+        }
+
+        .variable-item.hidden {
+            display: none;
+        }
+
+        .color-box {
+            width: 200px;
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-box.shadow-box {
+            background: white;
+            width: 200px;
+            height: 100px;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .color-box-value {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .shadow-box .color-box-value {
+            font-size: 7px;
+        }
+
+        .color-box-value:hover {
+            transform: scale(1.1);
+        }
+
+        .color-box-value.copied {
+            background: var(--m-positive-primary);
+        }
+
+        .variable-info {
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background: var(--m-base-03);
+            border-radius: 4px;
+        }
+
+        .variable-name {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--m-text-01);
+            margin: 0;
+        }
+
+        .copy-button {
+            background: var(--m-base-04);
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            color: var(--m-text-01);
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-button:hover {
+            background: var(--m-base-05);
+        }
+
+        .copy-button.copied {
+            background: var(--m-positive-primary);
+            color: white;
+        }
+
+        .group-header {
+            margin: 32px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--m-base-04);
+            color: var(--m-text-01);
+            font-size: 24px;
+            font-weight: 500;
+            grid-column: 1 / -1;
+            display: block;
+        }
+
+        .group-header.hidden {
+            display: none;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--m-text-01);
+            text-decoration: none;
+            background: var(--m-base-02);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: var(--m-base-03);
+        }
+
+        .search-container {
+            margin-bottom: 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 16px;
+            border: 1px solid var(--m-base-04);
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--m-text-01);
+            background: var(--m-base-02);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--m-pink-primary);
+            background: var(--m-base-01);
+        }
+
+        .search-input::placeholder {
+            color: var(--m-text-03);
+        }
+    </style>
+</head>
+<body class="m-theme-light">
+    <div class="theme-container">
+        <div class="header-container">
+            <a href="index.html" class="back-button">← Назад</a>
+            <div class="theme-switcher">
+                <button onclick="switchTheme('light')" class="active">Светлая тема</button>
+                <button onclick="switchTheme('dark')">Тёмная тема</button>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text"
+                   class="search-input"
+                   placeholder="Поиск по hex, rgba или названию переменной..."
+                   oninput="filterVariables(this.value)"
+            >
+        </div>
+
+        <div id="variables" class="variables-list">
+            <!-- Контент будет заполнен через JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const variableGroups = {
+            'Текст': '--m-text-',
+            'Фон': '--m-bg-',
+            'База': '--m-base-',
+            'Розовый': '--m-pink-',
+            'Синий': '--m-blue-',
+            'Прозрачный': '--m-transparent-',
+            'Позитивный': '--m-positive-',
+            'Негативный': '--m-negative-',
+            'Предупреждение': '--m-warning-',
+            'Информация': '--m-info-',
+            'Нейтральный': '--m-neutral-',
+            'Тени': '--m-shadow-'
+        };
+
+        function switchTheme(theme) {
+            const buttons = document.querySelectorAll('.theme-switcher button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.body.className = `m-theme-${theme}`;
+            setTimeout(displayThemeVariables, 50);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+        }
+
+        function rgbaToHex(rgba) {
+            if (rgba.startsWith('#')) return rgba;
+
+            const parts = rgba.match(/[\d.]+/g);
+            if (!parts) return rgba;
+
+            const r = parseInt(parts[0]);
+            const g = parseInt(parts[1]);
+            const b = parseInt(parts[2]);
+
+            return '#' + [r, g, b]
+                .map(x => {
+                    const hex = x.toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                })
+                .join('');
+        }
+
+        function copyHexValue(event, hexValue) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(hexValue);
+
+            const element = event.target;
+            element.classList.add('copied');
+            const originalText = element.textContent;
+            element.textContent = 'Copied!';
+
+            setTimeout(() => {
+                element.classList.remove('copied');
+                element.textContent = originalText;
+            }, 1000);
+        }
+
+        function copyVariable(variable, button) {
+            navigator.clipboard.writeText(variable);
+            button.classList.add('copied');
+            button.textContent = 'Copied!';
+
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.textContent = 'Copy';
+            }, 1000);
+        }
+
+        function copyValue(event, value) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(value);
+
+            const element = event.target;
+            element.classList.add('copied');
+            const originalText = element.textContent;
+            element.textContent = 'Copied!';
+
+            setTimeout(() => {
+                element.classList.remove('copied');
+                element.textContent = originalText;
+            }, 1000);
+        }
+
+        function filterVariables(searchText) {
+            const search = searchText.toLowerCase().trim();
+            const containers = document.querySelectorAll('.group-container');
+
+            containers.forEach(container => {
+                const items = container.querySelectorAll('.variable-item');
+                let hasVisibleItems = false;
+
+                items.forEach(item => {
+                    const variableName = item.querySelector('.variable-name').textContent.toLowerCase();
+                    const colorValue = item.querySelector('.color-box-value').textContent.toLowerCase();
+                    const matches = variableName.includes(search) || colorValue.includes(search);
+
+                    item.classList.toggle('hidden', !matches);
+                    if (matches) hasVisibleItems = true;
+                });
+
+                container.classList.toggle('hidden', !hasVisibleItems);
+            });
+        }
+
+        function displayThemeVariables() {
+            const variablesDiv = document.getElementById('variables');
+            variablesDiv.innerHTML = '';
+
+            // Создаем стили для каждого цвета
+            let styleSheet = document.createElement('style');
+            document.head.appendChild(styleSheet);
+
+            // Получаем переменные напрямую из CSS правил
+            const currentTheme = document.body.className;
+            const variables = {};
+
+            // Находим все CSS правила для текущей темы
+            for (const sheet of document.styleSheets) {
+                try {
+                    const rules = sheet.cssRules || sheet.rules;
+                    for (const rule of rules) {
+                        if (rule.selectorText && rule.selectorText.includes(currentTheme)) {
+                            for (let i = 0; i < rule.style.length; i++) {
+                                const prop = rule.style[i];
+                                if (prop.startsWith('--m-')) {
+                                    const value = rule.style.getPropertyValue(prop).trim();
+                                    variables[prop] = value;
+
+                                    // Создаем класс для этого цвета
+                                    const className = `color-${prop.replace('--', '')}`;
+                                    styleSheet.sheet.insertRule(
+                                        `.${className} { background-color: ${value} !important; }`,
+                                        styleSheet.sheet.cssRules.length
+                                    );
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Cannot read stylesheet', e);
+                }
+            }
+
+            // Группируем переменные
+            for (const [groupName, prefix] of Object.entries(variableGroups)) {
+                const groupVars = Object.entries(variables)
+                    .filter(([key]) => key.startsWith(prefix))
+                    .sort(([a], [b]) => a.localeCompare(b));
+
+                if (groupVars.length > 0) {
+                    const groupContainer = document.createElement('div');
+                    groupContainer.className = 'group-container';
+
+                    const groupHeader = document.createElement('h3');
+                    groupHeader.className = 'group-header';
+                    groupHeader.textContent = groupName;
+                    groupContainer.appendChild(groupHeader);
+
+                    groupVars.forEach(([variable, originalValue]) => {
+                        const isShadow = variable.includes('shadow');
+                        const className = `color-${variable.replace('--', '')}`;
+
+                        const item = document.createElement('div');
+                        item.className = 'variable-item visible'; // Добавляем visible по умолчанию
+
+                        if (isShadow) {
+                            item.innerHTML = `
+                                <div class="color-box shadow-box" style="box-shadow: ${originalValue}">
+                                    <span class="color-box-value" onclick="copyValue(event, '${originalValue}')">${originalValue}</span>
+                                </div>
+                                <div class="variable-info">
+                                    <div class="variable-name">${variable}</div>
+                                    <button class="copy-button" onclick="copyVariable('${variable}', this)">Copy</button>
+                                </div>
+                            `;
+                        } else {
+                            const temp = document.createElement('div');
+                            temp.className = className;
+                            temp.style.display = 'none';
+                            document.body.appendChild(temp);
+                            const computedValue = getComputedStyle(temp).backgroundColor;
+                            document.body.removeChild(temp);
+
+                            const hexValue = rgbaToHex(computedValue);
+
+                            item.innerHTML = `
+                                <div class="color-box ${className}">
+                                    <span class="color-box-value" onclick="copyHexValue(event, '${hexValue}')">${hexValue}</span>
+                                </div>
+                                <div class="variable-info">
+                                    <div class="variable-name">${variable}</div>
+                                    <button class="copy-button" onclick="copyVariable('${variable}', this)">Copy</button>
+                                </div>
+                            `;
+                        }
+
+                        groupContainer.appendChild(item);
+                    });
+
+                    variablesDiv.appendChild(groupContainer);
+                }
+            }
+
+            // После отображения всех элементов показываем их
+            document.querySelectorAll('.variable-item, .group-header').forEach(el => {
+                el.classList.add('visible');
+            });
+        }
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            displayThemeVariables();
+        };
+    </script>
+</body>
+</html>

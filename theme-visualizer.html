@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация тем Marquiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        /* Font faces */
+        @font-face {
+            font-family: 'Gilroy';
+            src: local('Gilroy'),
+                 url('assets/fonts/Gilroy-Regular.woff2') format('woff2'),
+                 url('assets/fonts/Gilroy-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gilroy';
+            src: local('Gilroy'),
+                 url('assets/fonts/Gilroy-Medium.woff2') format('woff2'),
+                 url('assets/fonts/Gilroy-Medium.woff') format('woff');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gilroy';
+            src: local('Gilroy'),
+                 url('assets/fonts/Gilroy-SemiBold.woff2') format('woff2'),
+                 url('assets/fonts/Gilroy-SemiBold.woff') format('woff');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gilroy';
+            src: local('Gilroy'),
+                 url('assets/fonts/Gilroy-Bold.woff2') format('woff2'),
+                 url('assets/fonts/Gilroy-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Base styles */
+        .theme-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header styles */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+
+        .back-button {
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Theme switcher styles */
+        .interface-theme-switch,
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .theme-switcher {
+            margin-left: auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .interface-theme-switch button,
+        .theme-switcher button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            background: transparent;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .interface-theme-switch button.active,
+        .theme-switcher button.active {
+            background: #d34085;
+            color: white;
+        }
+
+        /* Variables list styles */
+        .variables-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .group-container {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .variable-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        /* Color box styles */
+        .color-box {
+            width: 200px;
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-box-value {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-box-value:hover {
+            transform: scale(1.1);
+        }
+
+        /* Button styles */
+        .copy-button {
+            background: #e0e0e0;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-button:hover {
+            background: #d0d0d0;
+        }
+
+        .copy-button.copied {
+            background: #4CAF50;
+            color: white;
+        }
+
+        /* Variable info styles */
+        .variable-info {
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .variable-name {
+            font-family: monospace;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Search styles */
+        .search-container {
+            margin-bottom: 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: var(--bg-secondary);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Preview styles */
+        .theme-preview {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .font-preview {
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+        }
+
+        .button-style-preview {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .group-header {
+            margin: 32px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            grid-column: 1 / -1;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* Tabs styles */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: #d34085;
+            color: white;
+        }
+
+        /* Preview site styles */
+        .preview-site {
+            display: none;
+        }
+
+        .preview-site.active {
+            display: block;
+        }
+
+        .preview-window {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-header {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .preview-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .preview-footer {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preview-text {
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .preview-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .preview-subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* Breakpoints visualization styles */
+        .breakpoints-container {
+            display: none;
+            padding: 20px;
+        }
+
+        .breakpoints-container.active {
+            display: block;
+        }
+
+        .breakpoint-visual {
+            position: relative;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .breakpoint-line {
+            height: 4px;
+            background: var(--text-secondary);
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .breakpoint-marker {
+            position: absolute;
+            bottom: 100%;
+            transform: translateX(-50%);
+            text-align: center;
+            margin-bottom: 10px;
+            white-space: nowrap;
+        }
+
+        .breakpoint-marker::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: var(--text-main);
+            transform: translateX(-50%);
+        }
+
+        .breakpoint-marker.bottom {
+            top: 100%;
+            bottom: auto;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        .breakpoint-marker.bottom::after {
+            top: auto;
+            bottom: 100%;
+        }
+
+        .breakpoint-label {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .breakpoint-value {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* CSS Variables visualization */
+        .css-vars-group {
+            margin: 20px 0;
+        }
+
+        .css-var-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        .css-var-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 16px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .css-var-info {
+            flex-grow: 1;
+        }
+
+        .css-var-name {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .css-var-value {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .height-visual {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .height-bar {
+            background: var(--text-main);
+            width: 100px;
+            position: relative;
+        }
+
+        .height-bar::after {
+            content: attr(data-height);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes slide {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(200%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-container">
+        <div class="header-container">
+            <a href="index.html" class="back-button">← Назад</a>
+            <div class="interface-theme-switch">
+                <button onclick="switchInterfaceTheme('light')" class="active">Светлая</button>
+                <button onclick="switchInterfaceTheme('dark')">Тёмная</button>
+            </div>
+            <div class="theme-switcher">
+                <button onclick="switchTheme('light')" class="active">Светлая</button>
+                <button onclick="switchTheme('dark')">Тёмная</button>
+                <button onclick="switchTheme('light-blue')">Голубая</button>
+                <button onclick="switchTheme('copper-red')">Медная</button>
+                <button onclick="switchTheme('olive')">Оливковая</button>
+                <button onclick="switchTheme('red-crayola')">Красная</button>
+                <button onclick="switchTheme('green-creme')">Зелёная</button>
+                <button onclick="switchTheme('gunmetal')">Стальная</button>
+                <button onclick="switchTheme('glaucous')">Глаукус</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('theme')">Переменные темы</button>
+            <button class="tab" onclick="switchTab('preview')">Превью сайта</button>
+            <button class="tab" onclick="switchTab('breakpoints')">Брейкпоинты и переменные</button>
+        </div>
+
+        <div class="search-container">
+            <input type="text"
+                   class="search-input"
+                   placeholder="Поиск по значению или названию..."
+                   oninput="filterVariables(this.value)"
+            >
+        </div>
+
+        <div id="theme" class="variables-list active">
+            <!-- Контент будет заполнен через JavaScript -->
+        </div>
+
+        <div id="preview-site" class="preview-site">
+            <div class="preview-window">
+                <div class="preview-header">
+                    <h1 class="preview-title">Заголовок сайта</h1>
+                    <p class="preview-subtitle">Подзаголовок или описание</p>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-text">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <div style="text-align: center; margin: 40px 0;">
+                        <button class="preview-button">Кнопка действия</button>
+                    </div>
+                    <div class="preview-text">
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </div>
+                </div>
+                <div class="preview-footer">
+                    <p>© 2025 Пример сайта. Все права защищены.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="breakpoints" class="breakpoints-container">
+            <h3 class="group-header">CSS переменные</h3>
+            <div class="css-vars-group">
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #b1b5be"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--light-grey-blue</div>
+                        <div class="css-var-value">#b1b5be</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #e2e2e2"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--gray</div>
+                        <div class="css-var-value">#e2e2e2</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #2e2e54"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--dark-grey-blue</div>
+                        <div class="css-var-value">#2e2e54</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #d2d4d8"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--light-blue-grey</div>
+                        <div class="css-var-value">#d2d4d8</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #f7f7f7"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--white-two</div>
+                        <div class="css-var-value">#f7f7f7</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #69748c"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--grey-blue</div>
+                        <div class="css-var-value">#69748c</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #000000"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--black</div>
+                        <div class="css-var-value">#000000</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #d10a34"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--color-danger</div>
+                        <div class="css-var-value">#d10a34</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: #52bc77"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--color-success</div>
+                        <div class="css-var-value">#52bc77</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: rgba(209, 10, 52, 0.05)"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--color-danger-light</div>
+                        <div class="css-var-value">rgba(209, 10, 52, 0.05)</div>
+                    </div>
+                </div>
+                <div class="css-var-item">
+                    <div class="css-var-color" style="background: rgba(59, 173, 75, 0.05)"></div>
+                    <div class="css-var-info">
+                        <div class="css-var-name">--color-success-light</div>
+                        <div class="css-var-value">rgba(59, 173, 75, 0.05)</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="group-header">Брейкпоинты</h3>
+
+            <div class="breakpoint-visual">
+                <div class="breakpoint-line">
+                    <div class="breakpoint-marker" style="left: 100%">
+                        <div class="breakpoint-label">xxl-min</div>
+                        <div class="breakpoint-value">1351px</div>
+                    </div>
+                    <div class="breakpoint-marker" style="left: 90%">
+                        <div class="breakpoint-label">xl-max</div>
+                        <div class="breakpoint-value">1350px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 85%">
+                        <div class="breakpoint-label">xl-min</div>
+                        <div class="breakpoint-value">1201px</div>
+                    </div>
+                    <div class="breakpoint-marker" style="left: 80%">
+                        <div class="breakpoint-label">lg-max</div>
+                        <div class="breakpoint-value">1200px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 70%">
+                        <div class="breakpoint-label">lg-min</div>
+                        <div class="breakpoint-value">1119px</div>
+                    </div>
+                    <div class="breakpoint-marker" style="left: 60%">
+                        <div class="breakpoint-label">md-max</div>
+                        <div class="breakpoint-value">1118px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 50%">
+                        <div class="breakpoint-label">md-min</div>
+                        <div class="breakpoint-value">819px</div>
+                    </div>
+                    <div class="breakpoint-marker" style="left: 40%">
+                        <div class="breakpoint-label">sm-max</div>
+                        <div class="breakpoint-value">818px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 30%">
+                        <div class="breakpoint-label">sm-min</div>
+                        <div class="breakpoint-value">768px</div>
+                    </div>
+                    <div class="breakpoint-marker" style="left: 20%">
+                        <div class="breakpoint-label">xs-max</div>
+                        <div class="breakpoint-value">767px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 15%">
+                        <div class="breakpoint-label">xs-min</div>
+                        <div class="breakpoint-value">600px</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="group-header">Высоты</h3>
+            <div class="height-visual">
+                <div class="height-bar" style="height: 600px;" data-height="height-lg: 600px"></div>
+                <div class="height-bar" style="height: 500px;" data-height="height-md: 500px"></div>
+            </div>
+
+            <h3 class="group-header">Дополнительные брейкпоинты датапикера</h3>
+            <div class="breakpoint-visual">
+                <div class="breakpoint-line">
+                    <div class="breakpoint-marker" style="left: 60%">
+                        <div class="breakpoint-label">xs-before-last</div>
+                        <div class="breakpoint-value">360px</div>
+                    </div>
+                    <div class="breakpoint-marker bottom" style="left: 30%">
+                        <div class="breakpoint-label">xs-last</div>
+                        <div class="breakpoint-value">320px</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themeData = {
+            light: {
+                main: '#d34085',
+                buttonTextColor: '#ffffff',
+                bgColor: '#ffffff',
+                bgTextColor: '#363636',
+                bgTitleColor: '#363636',
+                footerColor: '#fafafa',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'progress-bar'
+                },
+                font: { name: 'Gilroy', src: 'Gilroy:400,500,600,700' }
+            },
+            dark: {
+                main: '#d13980',
+                buttonTextColor: '#ffffff',
+                bgColor: '#303537',
+                bgTextColor: '#ffffff',
+                bgTitleColor: '#ffffff',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'progress-bar'
+                },
+                font: { name: 'Gilroy', src: 'Gilroy:400,500,600,700' }
+            },
+            'light-blue': {
+                main: '#0054dd',
+                buttonTextColor: '#ffffff',
+                bgColor: '#ffffff',
+                footerColor: '#fafafa',
+                bgTextColor: '#000000',
+                bgTitleColor: '#000000',
+                buttonStyle: 'round-outline',
+                progress: {
+                    enabled: true,
+                    type: 'circular-steps'
+                },
+                font: { name: 'Inter', src: 'Inter:400,600,700' }
+            },
+            'copper-red': {
+                main: '#ce6c47',
+                buttonTextColor: '#ffffff',
+                bgColor: '#ffffff',
+                footerColor: '#fafafa',
+                bgTextColor: '#000000',
+                bgTitleColor: '#000000',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'steps'
+                },
+                font: { name: 'Inter', src: 'Inter:400,600,700' }
+            },
+            'olive': {
+                main: '#9e8b12',
+                buttonTextColor: '#ffffff',
+                bgColor: '#eeeae7',
+                bgTextColor: '#31455d',
+                bgTitleColor: '#31455d',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'dynamic-progress-bar'
+                },
+                font: { name: 'Inter', src: 'Inter:400,600,700' }
+            },
+            'red-crayola': {
+                main: '#e64555',
+                buttonTextColor: '#ffffff',
+                bgColor: '#ffffff',
+                footerColor: '#fafafa',
+                bgTextColor: '#002642',
+                bgTitleColor: '#002642',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'circular'
+                },
+                font: { name: 'Inter', src: 'Inter:400,600,700' }
+            },
+            'green-creme': {
+                main: '#fbcbbc',
+                buttonTextColor: '#1a2e2a',
+                bgColor: '#1e4941',
+                bgTextColor: '#ffffff',
+                bgTitleColor: '#ffffff',
+                buttonStyle: 'round',
+                progress: {
+                    enabled: true,
+                    type: 'circular'
+                },
+                font: { name: 'Gilroy', src: 'Gilroy:400,500,600,700' },
+                additionalFont: { name: 'Times' },
+                additionalFontStyle: 'italic'
+            },
+            'gunmetal': {
+                main: '#f4e4ba',
+                buttonTextColor: '#000000',
+                bgColor: '#1b2432',
+                bgTextColor: '#ffffff',
+                bgTitleColor: '#ffffff',
+                buttonStyle: 'round-outline',
+                progress: {
+                    enabled: true,
+                    type: 'circular-steps'
+                },
+                font: { name: 'Gilroy', src: 'Gilroy:400,500,600,700' },
+                additionalFont: { name: 'Times' },
+                additionalFontStyle: 'italic'
+            },
+            'glaucous': {
+                main: '#717ec3',
+                buttonTextColor: '#ffffff',
+                bgColor: '#37323e',
+                bgTextColor: '#ffffff',
+                bgTitleColor: '#ffffff',
+                buttonStyle: 'square',
+                progress: {
+                    enabled: true,
+                    type: 'dynamic-progress-bar'
+                },
+                font: { name: 'Inter', src: 'Inter:400,600,700' }
+            }
+        };
+
+        function switchTheme(theme) {
+            const buttons = document.querySelectorAll('.theme-switcher button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.toLowerCase().includes(theme)) {
+                    btn.classList.add('active');
+                }
+            });
+            const themeConfig = themeData[theme];
+            loadGoogleFonts(themeConfig);
+            displayThemeVariables(theme);
+            updatePreviewStyles(themeConfig);
+        }
+
+        function createColorBox(color, name) {
+            const item = document.createElement('div');
+            item.className = 'variable-item';
+            item.innerHTML = `
+                <div class="color-box" style="background-color: ${color}">
+                    <span class="color-box-value">${color}</span>
+                </div>
+                <div class="variable-info">
+                    <div class="variable-name">${name}</div>
+                    <button class="copy-button" onclick="copyValue(this, '${color}')">Copy</button>
+                </div>
+            `;
+            return item;
+        }
+
+        function displayThemeVariables(themeName) {
+            const variablesDiv = document.getElementById('theme');
+            variablesDiv.innerHTML = '';
+            const theme = themeData[themeName];
+
+            if (!theme) return;
+
+            // Основные цвета
+            const colorsHeader = document.createElement('h3');
+            colorsHeader.className = 'group-header';
+            colorsHeader.textContent = 'Основные цвета';
+            variablesDiv.appendChild(colorsHeader);
+
+            const colorsContainer = document.createElement('div');
+            colorsContainer.className = 'group-container';
+
+            Object.entries(theme).forEach(([key, value]) => {
+                if (typeof value === 'string' && value.startsWith('#')) {
+                    colorsContainer.appendChild(createColorBox(value, key));
+                }
+            });
+
+            variablesDiv.appendChild(colorsContainer);
+
+            // Стили и настройки
+            const stylesHeader = document.createElement('h3');
+            stylesHeader.className = 'group-header';
+            stylesHeader.textContent = 'Стили и настройки';
+            variablesDiv.appendChild(stylesHeader);
+
+            const stylesContainer = document.createElement('div');
+            stylesContainer.className = 'group-container';
+
+            // Шрифты
+            let fontPreview = `
+                <div class="variable-item">
+                    <h4>Шрифты</h4>
+                    <div class="font-preview" style="font-family: ${theme.font.name}">
+                        <p style="margin: 0 0 10px">Основной: ${theme.font.name}</p>
+                        <p style="font-size: 18px">The quick brown fox jumps over the lazy dog</p>
+                    </div>`;
+
+            if (theme.additionalFont) {
+                fontPreview += `
+                    <div class="font-preview" style="font-family: ${theme.additionalFont.name}; font-style: ${theme.additionalFontStyle || 'normal'}">
+                        <p style="margin: 0 0 10px">Дополнительный: ${theme.additionalFont.name}</p>
+                        <p style="font-size: 18px">The quick brown fox jumps over the lazy dog</p>
+                    </div>`;
+            }
+
+            fontPreview += '</div>';
+
+            // Кнопки
+            const buttonPreview = `
+                <div class="variable-item">
+                    <h4>Стиль кнопок: ${theme.buttonStyle}</h4>
+                    <div class="button-style-preview">
+                        <button style="border-radius: ${theme.buttonStyle.includes('round') ? '20px' : '4px'};
+                                     background: ${theme.buttonStyle.includes('outline') ? 'transparent' : theme.main};
+                                     color: ${theme.buttonStyle.includes('outline') ? theme.main : theme.buttonTextColor};
+                                     border: ${theme.buttonStyle.includes('outline') ? `2px solid ${theme.main}` : 'none'};
+                                     padding: 10px 20px;">
+                            Пример кнопки
+                        </button>
+                    </div>
+                </div>`;
+
+            // Прогресс
+            const progressPreview = `
+                <div class="variable-item">
+                    <h4>Прогресс</h4>
+                    <p style="margin: 5px 0">Тип: ${theme.progress.type}</p>
+                    <p style="margin: 5px 0">Включен: ${theme.progress.enabled ? 'Да' : 'Нет'}</p>
+                    <div class="progress-preview" style="margin-top: 10px">
+                        ${getProgressPreview(theme.progress.type, theme.main)}
+                    </div>
+                </div>`;
+
+            stylesContainer.innerHTML = fontPreview + buttonPreview + progressPreview;
+            variablesDiv.appendChild(stylesContainer);
+        }
+
+        function getProgressPreview(type, color) {
+            switch (type) {
+                case 'progress-bar':
+                    return `<div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px;">
+                            <div style="width: 60%; height: 100%; background: ${color}; border-radius: 3px;"></div>
+                           </div>`;
+                case 'circular':
+                    return `<div style="width: 40px; height: 40px; border: 3px solid #e0e0e0; border-radius: 50%;
+                                      border-top-color: ${color}; animation: spin 1s linear infinite;"></div>`;
+                case 'steps':
+                    return `<div style="display: flex; gap: 5px;">
+                            <div style="width: 20px; height: 6px; background: ${color}; border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 6px; background: ${color}; border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 6px; background: #e0e0e0; border-radius: 3px;"></div>
+                           </div>`;
+                case 'circular-steps':
+                    return `<div style="display: flex; gap: 8px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: ${color};"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: ${color};"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0;"></div>
+                           </div>`;
+                case 'dynamic-progress-bar':
+                    return `<div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
+                            <div style="width: 30%; height: 100%; background: ${color}; border-radius: 3px;
+                                      animation: slide 2s linear infinite;"></div>
+                           </div>`;
+                default:
+                    return '';
+            }
+        }
+
+        // Добавляем анимации
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            @keyframes slide {
+                from { transform: translateX(-100%); }
+                to { transform: translateX(200%); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function filterVariables(searchText) {
+            const search = searchText.toLowerCase();
+            document.querySelectorAll('.variable-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        function copyValue(button, value) {
+            navigator.clipboard.writeText(value);
+            button.textContent = 'Скопировано!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('copied');
+            }, 1000);
+        }
+
+        // Инициализация при загрузке
+        window.onload = () => {
+            const savedInterfaceTheme = localStorage.getItem('interface-theme') || 'light';
+            switchInterfaceTheme(savedInterfaceTheme);
+            switchTheme('light');
+            switchTab('theme');
+        };
+
+        function switchInterfaceTheme(theme) {
+            const buttons = document.querySelectorAll('.interface-theme-switch button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.toLowerCase().includes(theme)) {
+                    btn.classList.add('active');
+                }
+            });
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('interface-theme', theme);
+        }
+
+        function switchTab(tabName) {
+            // Обновляем активную вкладку
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if(tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Показываем нужный контент
+            const themeDiv = document.getElementById('theme');
+            const previewSiteDiv = document.getElementById('preview-site');
+            const breakpointsDiv = document.getElementById('breakpoints');
+            const searchContainer = document.querySelector('.search-container');
+
+            if (tabName === 'theme') {
+                themeDiv.style.display = 'grid';
+                previewSiteDiv.style.display = 'none';
+                breakpointsDiv.style.display = 'none';
+                searchContainer.style.display = 'flex';
+            } else if (tabName === 'preview') {
+                themeDiv.style.display = 'none';
+                previewSiteDiv.style.display = 'block';
+                breakpointsDiv.style.display = 'none';
+                searchContainer.style.display = 'none';
+            } else if (tabName === 'breakpoints') {
+                themeDiv.style.display = 'none';
+                previewSiteDiv.style.display = 'none';
+                breakpointsDiv.style.display = 'block';
+                searchContainer.style.display = 'none';
+            }
+        }
+
+        function updatePreviewStyles(theme) {
+            const previewWindow = document.querySelector('.preview-window');
+            const previewButton = document.querySelector('.preview-button');
+            const previewHeader = document.querySelector('.preview-header');
+            const previewContent = document.querySelector('.preview-content');
+            const previewFooter = document.querySelector('.preview-footer');
+
+            if (!theme || !previewWindow) return;
+
+            // Применяем стили фона
+            previewWindow.style.backgroundColor = theme.bgColor;
+            previewWindow.style.color = theme.bgTextColor;
+
+            // Стили заголовка
+            document.querySelector('.preview-title').style.color = theme.bgTitleColor;
+            document.querySelector('.preview-subtitle').style.color = theme.bgTextColor;
+
+            // Стили кнопки
+            const buttonRadius = theme.buttonStyle.includes('round') ? '20px' : '4px';
+            const buttonBg = theme.buttonStyle.includes('outline') ? 'transparent' : theme.main;
+            const buttonColor = theme.buttonStyle.includes('outline') ? theme.main : theme.buttonTextColor;
+            const buttonBorder = theme.buttonStyle.includes('outline') ? `2px solid ${theme.main}` : 'none';
+
+            previewButton.style.cssText = `
+                background: ${buttonBg};
+                color: ${buttonColor};
+                border: ${buttonBorder};
+                border-radius: ${buttonRadius};
+                padding: 12px 24px;
+                font-family: ${theme.font.name};
+            `;
+
+            // Применяем шрифты
+            previewWindow.style.fontFamily = theme.font.name;
+
+            // Стили футера
+            if (theme.footerColor) {
+                previewFooter.style.backgroundColor = theme.footerColor;
+            }
+        }
+
+        function loadGoogleFonts(theme) {
+            // Удаляем предыдущий линк с шрифтами, если он есть
+            const existingFontLink = document.querySelector('link[data-fonts]');
+            if (existingFontLink) {
+                existingFontLink.remove();
+            }
+
+            // Собираем все уникальные шрифты из темы
+            const fonts = new Set();
+
+            // Добавляем основной шрифт
+            if (theme.font.src) {
+                fonts.add(theme.font.src);
+            } else if (theme.font.name === 'Inter') {
+                fonts.add('Inter:400,600,700');
+            }
+
+            // Добавляем дополнительный шрифт
+            if (theme.additionalFont && theme.additionalFont.src) {
+                fonts.add(theme.additionalFont.src);
+            }
+
+            // Если есть шрифты для загрузки, создаем link
+            if (fonts.size > 0) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = `https://fonts.googleapis.com/css2?family=${Array.from(fonts).join('&family=')}&display=swap`;
+                link.setAttribute('data-fonts', '');
+                document.head.appendChild(link);
+            }
+        }
+    </script>
+</body>
+</html>
