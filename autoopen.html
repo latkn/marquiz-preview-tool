@@ -3,36 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Quiz Loader</title>
-    <script>
-        const quizId = localStorage.getItem('quizId');
-        if (!quizId) {
-            window.location.href = 'index.html';
-        }
-    </script>
+    <link rel="stylesheet" href="style.css">
+    <script src="draggable-line.js"></script>
+    <script src="line-factory.js"></script>
+    <script src="site-preview.js"></script>
+    <link rel="icon" href="assets/favicon.png" type="image/x-icon">
 </head>
 <body>
     <button class="back-button" onclick="goBack()">Назад</button>
-    <script async id="marquizScript" src="//script.marquiz.ru/v2.js"></script>
+    <div id="sitePreviewContainer"></div>
     <script>
+        const sitePreview = new SitePreview();
+
         function goBack() {
             window.location.href = 'index.html';
         }
 
         window.onload = function() {
             const quizId = localStorage.getItem('quizId');
-            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
+            const host = localStorage.getItem('host') || 'http://localhost:8080';
 
             if (quizId) {
-                Marquiz.init({
+                // Marquiz script start
+                (function(w, d, s, o) {
+                    var j = d.createElement(s);
+                    j.async = true;
+                    j.src = '//script.marquiz.ru/v2.js';
+                    j.onload = function() {
+                        if (document.readyState !== 'loading') Marquiz.init(o);
+                        else document.addEventListener("DOMContentLoaded", function() {
+                            Marquiz.init(o);
+                        });
+                    };
+                    d.head.insertBefore(j, d.head.firstElementChild);
+                })(window, document, 'script', {
                     host: host,
                     region: 'ru',
                     id: quizId,
-                    autoOpen: 0,
-                    autoOpenFreq: 'always',
-                    openOnExit: true,
+                    autoOpen: 3, // Changed to number of seconds
+                    autoOpenFreq: 'once',
+                    openOnExit: false,
                     disableOnMobile: false
+                });
+
+                (function(t, p) {
+                    window.Marquiz ? Marquiz.add([t, p]) : document.addEventListener('marquizLoaded', function() {
+                        Marquiz.add([t, p]);
+                    });
+                })('Widget', {
+                    id: quizId,
+                    position: 'right',
+                    delay: 0, // Changed to 0 for immediate display
+                    autoOpen: 100, // Changed to 0 for immediate display
+                    disableIfClosed: false,
+                    host: host
                 });
             }
         };

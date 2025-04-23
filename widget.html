@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="draggable-line.js"></script>
     <script src="line-factory.js"></script>
+    <script src="site-preview.js"></script>
     <link rel="icon" href="assets/favicon.png" type="image/x-icon">
     <style>
         .widget-title {
@@ -28,8 +29,13 @@
     <button onclick="createVerticalLine()">В</button>
     <button onclick="createHorizontalLine()">Г</button>
 
+    <div id="sitePreviewContainer"></div>
+
     <script async id="marquizScript" src="//script.marquiz.ru/v2.js"></script>
     <script>
+        // Инициализируем компонент предпросмотра сайта
+        const sitePreview = new SitePreview();
+
         function createVerticalLine() {
             window.createDraggableLine({
                 orientation: 'vertical',
@@ -55,14 +61,16 @@
         window.onload = function() {
             const quizId = localStorage.getItem('quizId');
             const quizIdProd = localStorage.getItem('quizIdProd');
-            const host = localStorage.getItem('host') || 'http://localhost:8080'; // Default host
-            const prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/'; // Default Prod Stand
+            const host = localStorage.getItem('host') || 'http://localhost:8080';
+            const prodStand = localStorage.getItem('prodStand') || 'https://mrqz.me/';
 
             if (quizId) {
                 Marquiz.init({
                     host: host,
                     region: 'ru',
                     id: quizId,
+                    autoOpen: true, // Changed to true
+                    autoOpenFreq: 'always', // Changed to always
                 });
 
                 (function(t, p) {
@@ -74,7 +82,7 @@
                     id: quizId,
                     position: 'right',
                     delay: 0,
-                    autoOpen: 100,
+                    autoOpen: 0, // Changed to 0 for immediate display
                     disableIfClosed: false
                 });
             }
@@ -89,7 +97,7 @@
                     id: quizIdProd,
                     position: 'left',
                     delay: 0,
-                    autoOpen: 100,
+                    autoOpen: 0, // Changed to 0 for immediate display
                     disableIfClosed: false
                 });
             }

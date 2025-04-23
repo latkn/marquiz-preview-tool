@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Loader</title>
-    <script>
-        const quizId = localStorage.getItem('quizId');
-        if (!quizId) {
-            window.location.href = 'index.html';
-        }
-    </script>
     <link rel="stylesheet" href="style.css">
+    <script src="draggable-line.js"></script>
+    <script src="line-factory.js"></script>
+    <script src="site-preview.js"></script>
+    <link rel="icon" href="assets/favicon.png" type="image/x-icon">
 </head>
 <body>
     <button class="back-button" onclick="goBack()">Назад</button>
-
+    <div id="sitePreviewContainer"></div>
     <script>
+        const sitePreview = new SitePreview();
+
         function goBack() {
             window.location.href = 'index.html';
         }
@@ -40,8 +40,8 @@
                     host: host,
                     region: 'ru',
                     id: quizId,
-                    autoOpen: false,
-                    autoOpenFreq: 'once',
+                    autoOpen: true, // Changed to true
+                    autoOpenFreq: 'always', // Changed to always
                     openOnExit: false,
                     disableOnMobile: false
                 });
@@ -56,6 +56,7 @@
                     title: 'Пройти тест',
                     text: 'Пройдите квиз и посмотрим что будет',
                     delay: 0,
+                    autoOpen: 0, // Changed to 0 for immediate display
                     textColor: '#ffffff',
                     bgColor: '#d34085',
                     svgColor: '#ffffff',
